@@ -1,0 +1,15 @@
+# .air.toml
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# 你專案入口如果是 ./cmd/api 就這樣
+cmd = "go build -o ./tmp/app ./cmd/api"
+bin = "./tmp/app"
+
+# 只要 Go 檔變動就重編
+include_ext = ["go"]
+exclude_dir = ["tmp", "vendor", ".git"]
+
+[log]
+time = true

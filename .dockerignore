@@ -1,0 +1,12 @@
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+tmp
+**/*.log
+
+# 若你有 build 產物
+bin
+dist

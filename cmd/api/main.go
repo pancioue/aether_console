@@ -35,6 +35,12 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("test ok"))
 	})
+
+	mux.HandleFunc("/test12", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("test12 ok"))
+	})
 	mux.HandleFunc("/healthz", healthH.Healthz)
 
 	srv := &http.Server{
