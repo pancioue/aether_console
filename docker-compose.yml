@@ -9,11 +9,11 @@ services:
     environment:
       APP_ENV: local
 
-      MYSQL_HOST: mysql
-      MYSQL_PORT: "3306"
-      MYSQL_DB: aether
-      MYSQL_USER: aether
-      MYSQL_PASS: secret
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: aether
+      DB_USER: aether
+      DB_PASS: secret
 
       REDIS_ADDR: redis:6379
     volumes:

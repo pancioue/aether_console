@@ -6,8 +6,10 @@ import (
 	"os"
 	"time"
 
+	"aether-console/internal/db"
 	"aether-console/internal/http/handlers"
 	"aether-console/internal/services/health"
+	"aether-console/internal/todo"
 )
 
 func main() {
@@ -16,32 +18,32 @@ func main() {
 		port = "8080"
 	}
 
+	mysqlCfg := db.LoadConfig()
+	mysqlDB, err := db.Open(mysqlCfg)
+	if err != nil {
+		log.Fatalf("open mysql: %v", err)
+	}
+	defer mysqlDB.Close()
+
 	// services
 	healthSvc := health.New()
 
+	// repos
+	todoRepo := todo.Repo{DB: mysqlDB}
+
 	// handlers
 	healthH := handlers.NewHealthHandler(healthSvc)
+	todoH := handlers.NewTodoHandler(todoRepo)
 
 	// router (net/http)
-	// test
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ok"))
 	})
-	mux.HandleFunc("/test", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("test ok"))
-	})
-
-	mux.HandleFunc("/test12", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("test12 ok"))
-	})
 	mux.HandleFunc("/healthz", healthH.Healthz)
+	mux.HandleFunc("/todos", todoH.List)
 
 	srv := &http.Server{
 		Addr:              ":" + port,
